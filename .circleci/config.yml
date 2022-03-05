@@ -1,5 +1,6 @@
 version: 2.1
 
+
 orbs:
   aws-cli: circleci/aws-cli@2.0.6
   ansible-playbook: orbss/ansible-playbook@0.0.5
@@ -31,6 +32,6 @@ jobs:
             fi
             
  workflows:
-  sample-workflow:
-    jobs:
-      - aws-cli
+   sample-workflow:
+     jobs:
+       - aws-cli
