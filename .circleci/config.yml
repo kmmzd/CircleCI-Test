@@ -30,4 +30,7 @@ jobs:
               aws cloudformation wait stack-create-complete --stack-name $STACK_NAME
             fi
             
- 
+workflows:
+  sample-workflow:
+    jobs:
+      - aws-cli
