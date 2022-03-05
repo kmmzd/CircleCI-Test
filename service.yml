@@ -106,7 +106,6 @@ Resources:
         - Key: Name
           Value: !Ref RouteTableName
           
-
 # ------------------------------------------------------------#
 # A route table that's associated with an internet gateway.
 # ------------------------------------------------------------#      
