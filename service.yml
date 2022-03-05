@@ -1,0 +1,196 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "This template creates one EC2 Instance."
+
+Parameters:
+  VpcName:
+    Description: "Please type the VPC name. This Parameter will be a Name tag."
+    Type: String
+    Default: CircleCISample_VPC
+  EnvType: 
+    Description: "Please type the Environment Type. Choose from dev, test, stg, prod."
+    Type: String
+    Default: "dev"
+    AllowedValues:
+      - "dev"
+      - "test"
+      - "stg"
+      - "prod"  
+  VpcCidrBlock:
+    Description: "Please type the VPC IPv4 CidrBlock." 
+    Type: String  
+    Default: 10.0.0.0/16
+  IGwName:
+    Description: "Please type the InternetGataway name.This Parameter will be a Name tag." 
+    Type: String
+    Default: "CircleCISample_IGw"
+  RouteTableName:
+    Description: "Please type the RouteTable Name.This Parameter will be a Name tag."
+    Type: String
+    Default: "CircleCISample_rt"
+    SecurityGroupPubEC2Name:
+    Description: "Please type the Security group name for EC2 instance. This Parameter will be a Name tag. "
+    Type: String
+    Default: "CircleCISample_SG__Pub_EC2"
+     EnvType: 
+    Description: "Please type the Environment Type. Choose from dev, test, stg, prod."
+    Type: String
+    Default: "dev"
+    AllowedValues:
+      - "dev"
+      - "test"
+      - "stg"
+      - "prod"  
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    # linux2
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2    
+  EC21aName: 
+    Description: "Please type the EC2 1a name. This Parameter will be a Name tag."
+    Type: String
+    Default: "CircleCISampleEC21a"  
+  Pub1aSubnetName:
+    Description: "Please type the Public 1a Subnet Name tag."
+    Type: String
+    Default: "CircleCISample_pub_1a_Subnet"
+  Pub1aSubnetCidrBlock:
+    Description: "Please type the Public 1a Subnet IPv4 CidrBlock."
+    Type: String
+    Default: "10.0.0.0/24"
+
+
+Resources:
+# ------------------------------------------------------------#
+# VPC
+# ------------------------------------------------------------#
+  CircleCISampleVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidrBlock  
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: !Ref VpcName
+        - Key: EnvType
+          Value: !Ref EnvType
+
+# ------------------------------------------------------------#
+# Internet_Gateway
+# ------------------------------------------------------------#          
+  CircleCISampleIGw:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref IGwName   
+
+# ------------------------------------------------------------#
+# Attach_IGw
+# ------------------------------------------------------------#          
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref CircleCISampleVPC 
+      InternetGatewayId: !Ref CircleCISampleIGw        
+
+# ------------------------------------------------------------#
+# RouteTable
+# ------------------------------------------------------------#      
+  CircleCISamplert:
+    Type: AWS::EC2::RouteTable
+    DependsOn: AttachGateway
+    Properties: 
+      VpcId: !Ref CircleCISampleVPC
+      Tags: 
+        - Key: Name
+          Value: !Ref RouteTableName
+          
+
+# ------------------------------------------------------------#
+# A route table that's associated with an internet gateway.
+# ------------------------------------------------------------#      
+  Gatewayrt:
+    Type: AWS::EC2::Route
+    Properties: 
+      RouteTableId: !Ref CircleCISamplert
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref CircleCISampleIGw
+
+# ------------------------------------------------------------#
+# A route table that's associated with public subnet.
+# ------------------------------------------------------------#      
+  RouteTableAssciationPub1a:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref CircleCISamplert
+      SubnetId: !Ref CircleCISamplePub1aSubnet
+
+# ------------------------------------------------------------#
+# Public Subnet 1a,
+# ------------------------------------------------------------#      
+  CircleCISamplePub1aSubnet:
+    Type: AWS::EC2::Subnet
+    DependsOn: Gatewayrt 
+    Properties:
+      VpcId: !Ref CircleCISampleVPC 
+      AvailabilityZone: "ap-northeast-1a"
+      CidrBlock: !Ref Pub1aSubnetCidrBlock 
+      MapPublicIpOnLaunch: 'true'
+      Tags:
+      - Key: Name 
+        Value: !Ref Pub1aSubnetName
+        
+# ------------------------------------------------------------#
+# Security group for EC2 instances
+# ------------------------------------------------------------#    
+  CircleCISampleSGPubEC2:  
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupName: !Ref SecurityGroupPubEC2Name  
+        GroupDescription: "Allow HTTP and SSH"
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 22
+            ToPort: 22
+            CidrIp: 0.0.0.0/0
+          - IpProtocol: tcp
+            FromPort: 80
+            ToPort: 80
+            CidrIp: 0.0.0.0/0
+        Tags: 
+          - Key: Name
+            Value: !Ref SecurityGroupPubEC2Name 
+        VpcId: !Ref CircleCISampleVPCId 
+
+# ------------------------------------------------------------#
+# EC2:1a
+# ------------------------------------------------------------#
+  CircleCISampleEC21a:  
+    Type: AWS::EC2::Instance 
+    Properties:  
+      ImageId : !Ref LatestAmiId
+      InstanceType: !Ref EC21aInstanceType 
+      KeyName: mykey.pem
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: 'true'
+          DeviceIndex: "0"
+          GroupSet: 
+            - !Ref CircleCISampleSGPubEC2
+          SubnetId: !Ref CircleCISamplePub1aSubnet
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: 8
+      Tags:
+              - Key: EnvType 
+                Value: !Ref EnvType 
+              - Key: Name
+                Value: !Ref EC21aName
+      UserData:
+        Fn::Base64: |
+            sudo yum -y update
+            sudo yum localinstall -y https://dev.mysql.com/get/mysql80-community-release-el7-2.noarch.rpm   
+            sudo yum install -y mysql-community-server   
+
