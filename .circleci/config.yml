@@ -19,18 +19,18 @@ jobs:
       - run:
           name: Excute Create/Update Stack
           command: |
-            set +e  
-            aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE | grep $STACK_NAME ]; then
-            if [ $? -ne 0]; then    
-              aws cloudformation create-stack --stack-name $STACK_NAME --region ap-northeast-1 --template-body $TEMPLATE_FILE
-              aws cloudformation wait stack-create-complete --stack-name $STACK_NAME
-            else 
-              aws cloudformation update-stack --stack-name $STACK_NAME --region ap-northeast-1 --template-body $TEMPLATE_FILE
-              if [ $? -ne 0]; then
-                exit 0 
-              elif [ $? -eq 0] 
-                aws cloudformation wait stack-create-complete --stack-name $STACK_NAME
+            set +e
+            aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE | grep $STACK_NAME
+            if [ $? -eq 0 ]; then
+              aws cloudformation update-stack --stack-name $STACK_NAME --template-body file://$TEMPLATE_FILE
+              if [ $? -eq 255 ]; then
+                exit 0
+              elif [ $? -eq 0 ]; then
+                aws cloudformation wait stack-update-complete --stack-name $STACK_NAME
               fi
+            else
+              aws cloudformation create-stack --stack-name $STACK_NAME --template-body file://$TEMPLATE_FILE
+              aws cloudformation wait stack-create-complete --stack-name $STACK_NAME
             fi
             
 workflows:
