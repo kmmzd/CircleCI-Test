@@ -27,11 +27,11 @@ Parameters:
     Description: "Please type the RouteTable Name.This Parameter will be a Name tag."
     Type: String
     Default: "CircleCISample_rt"
-    SecurityGroupPubEC2Name:
+  SecurityGroupPubEC2Name:
     Description: "Please type the Security group name for EC2 instance. This Parameter will be a Name tag. "
     Type: String
     Default: "CircleCISample_SG__Pub_EC2"
-     EnvType: 
+  EnvType: 
     Description: "Please type the Environment Type. Choose from dev, test, stg, prod."
     Type: String
     Default: "dev"
