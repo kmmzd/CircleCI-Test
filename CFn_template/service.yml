@@ -31,15 +31,6 @@ Parameters:
     Description: "Please type the Security group name for EC2 instance. This Parameter will be a Name tag. "
     Type: String
     Default: "CircleCISample_SG__Pub_EC2"
-  EnvType: 
-    Description: "Please type the Environment Type. Choose from dev, test, stg, prod."
-    Type: String
-    Default: "dev"
-    AllowedValues:
-      - "dev"
-      - "test"
-      - "stg"
-      - "prod"  
   LatestAmiId:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     # linux2
