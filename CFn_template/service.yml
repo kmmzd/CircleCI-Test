@@ -160,7 +160,7 @@ Resources:
     Type: AWS::EC2::Instance 
     Properties:  
       ImageId : !Ref LatestAmiId
-      InstanceType: !Ref EC21aInstanceType 
+      InstanceType: "t2.micro"
       KeyName: mykey.pem
       NetworkInterfaces: 
         - AssociatePublicIpAddress: 'true'
