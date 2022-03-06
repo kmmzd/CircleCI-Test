@@ -151,7 +151,7 @@ Resources:
         Tags: 
           - Key: Name
             Value: !Ref SecurityGroupPubEC2Name 
-        VpcId: !Ref CircleCISampleVPCId 
+        VpcId: !Ref CircleCISampleVPC
 
 # ------------------------------------------------------------#
 # EC2:1a
