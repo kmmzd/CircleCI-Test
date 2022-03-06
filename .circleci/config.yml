@@ -20,7 +20,7 @@ jobs:
           name: Excute Create/Update Stack
           command: |
             set +e  
-            aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE | grep $STACK_NAME ]; then
+            aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE | grep $STACK_NAME 
             if [ $? -ne 0]; then    
               aws cloudformation create-stack --stack-name $STACK_NAME --region ap-northeast-1 --template-body $TEMPLATE_FILE
               aws cloudformation wait stack-create-complete --stack-name $STACK_NAME
