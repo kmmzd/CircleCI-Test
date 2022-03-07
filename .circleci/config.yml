@@ -32,8 +32,8 @@ jobs:
       - ansible-playbook/install:
           version: "2.9.23"
       - ansible-playbook/playbook:
-          inventory: ANSIBLE_INVENTORY # circleciの環境変数で指定。
-          playbook: ansible/playbook.yml　
+          inventory: ANSIBLE_INVENTORY # base64形式でcircleciの環境変数にpathを登録。
+          playbook: "ansible/playbook.yml"　
           playbook-options: -u ec2-user --private-key ~/.ssh/mykey.pem    
   
   serverspec-execute:
