@@ -20,7 +20,7 @@ jobs:
       - run:
           name: Excute Create/Update Stack
           command: |
-            aws cloudformation deploy --template-file://$TEMPLATE_FILE --stack-name $STACK_NAME 
+            aws cloudformation deploy --stack-name $STACK_NAME --template-file $TEMPLATE_FILE
             aws cloudformation wait deployment-successful --stack-name $STACK_NAME
 
   ansible-execute:
