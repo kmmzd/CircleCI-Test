@@ -1,6 +1,5 @@
 ---
-- name: Playbook for dev
-  hosts: dev # devタグの付いた対象で実行。
+- hosts: all
   become: yes
   vars:
     ruby_version: 3.1.1  
