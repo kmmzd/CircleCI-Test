@@ -29,8 +29,8 @@ jobs:
       - ansible-playbook/install:
           version: "2.9.23"
       - ansible-playbook/playbook:
-          inventory: "ANSIBLE_INVENTORY" 
-          playbook: "ansible/playbook.yml"　
+          inventory: "ANSIBLE_INVENTORY"
+          playbook: "ansible/playbook.yml"
           playbook-options: "-u ec2-user" 
           private-key: "AWS_SECRET_ACCESS_KEY"
           
@@ -53,13 +53,13 @@ jobs:
             rspec  
             
   
-  workflows:
+workflows:
   sample-workflow:
     jobs:
       - cloudformation-execute
       - ansible-execute:
           requires:
-            - "cloudformation-execute"
+            - cloudformation-execute
       - serverspec-execute:
           requires:
             - cloudformation-execute
