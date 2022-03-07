@@ -21,7 +21,11 @@ jobs:
           name: Excute Create/Update Stack
           command: |
             aws cloudformation deploy --stack-name $STACK_NAME --template-file $TEMPLATE_FILE
-            aws cloudformation wait deployment-successful --stack-name $STACK_NAME
+            aws cloudformation wait change-set-create-complete --stack-name $STACK_NAME
+            aws cloudformation wait stack-create-complete   --stack-name $STACK_NAME
+            aws cloudformation wait stack-update-complete --stack-name $STACK_NAME
+            
+            
 
   ansible-execute:
     executor: ansible-playbook/default
