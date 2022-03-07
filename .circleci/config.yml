@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@2.0.6
   ansible-playbook: orbss/ansible-playbook@0.0.5
+  ruby: circleci/ruby@1.2.0
 
 jobs: 
   cloudformation-execute:
@@ -45,7 +46,26 @@ jobs:
       - ansible-playbook/playbook:
           inventory: ANSIBLE_INVENTORY # circleciの環境変数で指定。
           playbook: ansible/playbook.yml　
-          playbook-options: -u ec2-user --private-key ~/.ssh/mykey.pem            
+          playbook-options: -u ec2-user --private-key ~/.ssh/mykey.pem    
+  
+  serverspec-execute:
+    executor: ruby/default
+    steps:
+      - checkout
+      - add_ssh_keys:  
+          fingerprints:  
+            - "28:b8:76:c9:49:07:76:4e:d2:15:90:76:e6:ae:08:ea" 
+      - ruby/install:
+          version: "3.1.1"
+      - run:
+          name: "Install serverspec"
+          command: |
+            gem install serverspec
+      - run:
+          name: "Execute serverspec"
+          command: |
+            rspec  
+  
             
             
 workflows:
@@ -55,3 +75,7 @@ workflows:
       - ansible-execute:
           requires:
             - "cloudformation-execute"
+      - serverspec-execute:
+          requires:
+            - cloudformation-execute
+            - ansible-execute
