@@ -181,6 +181,6 @@ Resources:
       UserData:
         Fn::Base64: |
             sudo yum -y update
-            sudo yum localinstall -y https://dev.mysql.com/get/mysql80-community-release-el8-2.noarch.rpm   
+            sudo yum localinstall -y https://dev.mysql.com/get/mysql80-community-release-el8-3.noarch.rpm   
             sudo yum install -y mysql-community-server   
 
