@@ -20,21 +20,9 @@ jobs:
       - run:
           name: Excute Create/Update Stack
           command: |
-            set +e
-            aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE | grep $STACK_NAME
-            if [ $? -eq 0 ]; then
-              aws cloudformation update-stack --stack-name $STACK_NAME --template-body file://$TEMPLATE_FILE
-              if [ $? -ne 0 ]; then
-                exit 0
-              elif [ $? -eq 0 ]; then
-                aws cloudformation wait stack-update-complete --stack-name $STACK_NAME
-              fi
-            else
-              aws cloudformation create-stack --stack-name $STACK_NAME --template-body file://$TEMPLATE_FILE
-              aws cloudformation wait stack-create-complete --stack-name $STACK_NAME
-            fi
-          no_output_timeout: 20m  
-            
+            aws cloudformation deploy --stack-name $STACK_NAME --template-body file://$TEMPLATE_FILE
+            aws cloudformation wait deployment-successful --stack-name $STACK_NAME
+
   ansible-execute:
     executor: ansible-playbook/default
     steps:
