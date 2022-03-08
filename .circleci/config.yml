@@ -26,13 +26,15 @@ jobs:
     executor: ansible-playbook/default
     steps:
       - checkout
+      - add_ssh_keys:  
+          fingerprints:  
+            - "28:b8:76:c9:49:07:76:4e:d2:15:90:76:e6:ae:08:ea"
       - ansible-playbook/install:
           version: "2.9.23"
       - ansible-playbook/playbook:
           inventory: "ANSIBLE_INVENTORY"
           playbook: "ansible/playbook.yml"
-          playbook-options: "-u ec2-user --private-key ~/.ssh/mykey.pem" 
-          private-key: "AWS_SECRET_ACCESS_KEY"
+          playbook-options: "-u ec2-user --private-key ~/.ssh/mykey.pem"
           
   serverspec-execute:
     executor: ruby/default
