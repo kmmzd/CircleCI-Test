@@ -47,8 +47,7 @@ CircleCIのサンプルリポジトリです。
 
 EC2インスタンスを1台作成します。
 
-
-![CFntest_Diagram](https://user-images.githubusercontent.com/91016271/157255605-ef0741c7-5a7c-48b4-afff-bd8622cc9d76.png)
+![CFntest_Diagram drawio 300](https://user-images.githubusercontent.com/91016271/157261737-3148e605-c31e-4075-b92e-4e38462d0c16.png)
 
 # Ansible
 
