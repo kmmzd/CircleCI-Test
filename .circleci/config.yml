@@ -31,7 +31,7 @@ jobs:
       - ansible-playbook/playbook:
           inventory: "ANSIBLE_INVENTORY"
           playbook: "ansible/playbook.yml"
-          playbook-options: "-u ec2-user" 
+          playbook-options: "-u ec2-user --private-key ~/.ssh/mykey.pem" 
           private-key: "AWS_SECRET_ACCESS_KEY"
           
   serverspec-execute:
